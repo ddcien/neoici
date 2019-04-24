@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import pynvim
-
-import sys
-import os
 import pickle
 import json
+import io
+import threading
+import pynvim
 import requests
 import xmltodict
 from pydub import AudioSegment
 from pydub.playback import play
 from validators import url as valid_url
-import io
-import threading
+
 
 class ResultThread(threading.Thread):
     def __init__(self, *args, **kwargs):
@@ -54,7 +52,6 @@ class URLFetcher(ResultThread):
         except Exception:
             return False
 
-
     def _fetcher(self):
         try:
             if not self._valid():
@@ -79,6 +76,7 @@ class MP3Fetcher(URLFetcher):
     def _valid(self):
         return super()._valid() and self._url.endswith('mp3')
 
+
 class LDBPusher(threading.Thread):
     _URL = 'http://localhost:5432'
 
@@ -93,8 +91,9 @@ class LDBPusher(threading.Thread):
         if self._data is None:
             requests.delete(url=self._URL, params={'word': self._word})
         else:
-            requests.put(url=self._URL, params={'word': self._word}, data=pickle.dumps(self._data, protocol=-1))
-
+            requests.put(url=self._URL,
+                         params={'word': self._word},
+                         data=pickle.dumps(self._data, protocol=-1))
 
 
 class LDBFetcher(URLFetcher):
@@ -122,21 +121,14 @@ class ICIFetcher(URLFetcher):
             *args,
             **kwargs)
 
+
 def _is_valid_url(url):
     return isinstance(url, str) and url.endswith('mp3') and valid_url(url)
+
 
 class JSONICIFetcher(ICIFetcher):
     def __init__(self, word: str, *args, **kwargs):
         super().__init__(word=word, t='json', *args, **kwargs)
-
-
-    @staticmethod
-    def _mp3_fetcher(url):
-        if not_is_valid_url(url):
-            return None
-        t = MP3Fetcher(url=url)
-        t.start()
-        return t
 
     def _parser(self, content: bytes) -> dict:
         data = json.loads(content)
@@ -153,7 +145,7 @@ class JSONICIFetcher(ICIFetcher):
             s['ph_en_mp3_data'] = s['ph_en_mp3_data'].join()
             s['ph_tts_mp3_data'] = s['ph_tts_mp3_data'].join()
 
-        data['sent'] =[]
+        data['sent'] = []
 
         return data
 
@@ -297,3 +289,4 @@ class NeoIciPlugin(object):
                 return None
 
             return self.parse(data)
+
