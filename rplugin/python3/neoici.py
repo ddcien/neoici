@@ -226,7 +226,7 @@ class NeoIciPlugin(object):
             if s.get('ph_am'):
                 ph += ' US: [{}]'.format(s.get('ph_am'))
                 if s.get('ph_am_mp3_data'):
-                    ph += '🔇'
+                    ph += '🔊'
                     if not played:
                         song = AudioSegment.from_file(
                             io.BytesIO(s.get('ph_am_mp3_data')), format="mp3")
@@ -237,7 +237,7 @@ class NeoIciPlugin(object):
             if s.get('ph_en'):
                 ph += ' UK: [{}]'.format(s.get('ph_en'))
                 if s.get('ph_en_mp3_data'):
-                    ph += '🔇'
+                    ph += '🔊'
                     if not played:
                         song = AudioSegment.from_file(
                             io.BytesIO(s.get('ph_en_mp3_data')), format="mp3")
@@ -255,7 +255,7 @@ class NeoIciPlugin(object):
 
                 ph += ' TTS: [{}]'.format(pho)
                 if s.get('ph_tts_mp3_data'):
-                    ph += '🔇'
+                    ph += '🔊'
                     if not played:
                         song = AudioSegment.from_file(
                             io.BytesIO(s.get('ph_tts_mp3_data')), format="mp3")
